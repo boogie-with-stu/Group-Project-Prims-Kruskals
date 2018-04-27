@@ -22,14 +22,23 @@ def graph(glist):
         file.write(text)
         text = ' '
         file.write(text)
+        text = str(glist[i][2])
+        file.write(text)
         text = '\n'
         file.write(text)
     file.close()
 
-    gr = nx.read_edgelist(Graph_File, create_using=nx.Graph(), nodetype=str)
-
-    print(nx.info(gr)) ### Graph
-    nx.draw(gr)
+    G = nx.read_edgelist(Graph_File, nodetype=str, data=(('weight',float),))
+    e=[(u,v) for (u,v,d) in G.edges(data=True)]
+    pos=nx.spring_layout(G) # positions for all nodes
+    nx.draw_networkx_nodes(G,pos,node_size=250) # nodes
+    nx.draw_networkx_edges(G,pos,edgelist=e,width=1) # edges
+        
+        # labels
+    labels = nx.get_edge_attributes(G,'weight')
+    nx.draw_networkx_labels(G,pos,font_size=10,font_family='sans-serif')
+    nx.draw_networkx_edge_labels(G,pos,edge_labels=labels)
+    plt.axis('off')
     plt.show()  
 
 ### MST Function 
@@ -96,5 +105,3 @@ print (" Initial vertecis are; \n", vertex, "\n Initial edges are; \n",
 graph(beforeMST)
 print(" MST graph; \n")
 graph(afterMST)
-
-       

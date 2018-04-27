@@ -2,6 +2,8 @@ from collections import defaultdict
 import heapq
 import networkx as nx
 import matplotlib.pyplot as plt
+import numpy as np
+
 Input_File = 'input.txt'
 Output_File = 'output.txt'
 Graph_File = 'graph.txt'
@@ -51,22 +53,13 @@ def mst(vertex, edges):
                     heapq.heappush(remedges, i)
     return tree
 
-### Getting Data From File
-    
-file = open(Input_File, 'r') ### Getting data ready
-rawcontent = file.readlines()
-rawcontent = [x.strip() for x in rawcontent]
-file.close() 
-
-content = []
-for i in rawcontent:
-    j = i.replace(' ','')
-    content.append(j)
 
 ### Construct Edge List
-
+    
+content = []
 edges = []
-for i in range(len(content)): ### Getting edge list ready
+content = np.loadtxt(Input_File, str)
+for i in range(len(content)):
    temp = int(content[i][2])
    templist = []
    templist.append(content[i][0])
@@ -103,5 +96,5 @@ print (" Initial vertecis are; \n", vertex, "\n Initial edges are; \n",
 graph(beforeMST)
 print(" MST graph; \n")
 graph(afterMST)
-   
+
        

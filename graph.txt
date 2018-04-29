@@ -1,9 +1,16 @@
-a b 
-a d 
-d v 
-v h 
-h i 
-a e 
-b c 
-i f 
-f g 
+A C 1
+G K 1
+C D 2
+E G 2
+B C 3
+E F 4
+K J 4
+D E 6
+F K 7
+A E 8
+F G 8
+A B 10
+E H 11
+H I 12
+G H 14
+G J 16

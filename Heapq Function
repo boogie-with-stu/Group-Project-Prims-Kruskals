@@ -10,7 +10,7 @@ Graph_File = 'graph.txt'
 
 ### Graph Function
 
-def graph(glist):
+def graph(glist, light=None):
     
     file = open(Graph_File, 'w') ### Adding vertecis to graph file
     for i in range(len(glist)):
@@ -30,11 +30,12 @@ def graph(glist):
 
     G = nx.read_edgelist(Graph_File, nodetype=str, data=(('weight',float),))
     e=[(u,v) for (u,v,d) in G.edges(data=True)]
-    pos=nx.spring_layout(G) # positions for all nodes
-    nx.draw_networkx_nodes(G,pos,node_size=250) # nodes
-    nx.draw_networkx_edges(G,pos,edgelist=e,width=1) # edges
-        
-        # labels
+    pos=nx.spring_layout(G)
+    nx.draw_networkx_nodes(G,pos,node_color='r',node_size=200)
+    nx.draw_networkx_edges(G,pos,edgelist=e,edge_color='b',width=2)
+    if light != None: 
+        nx.draw_networkx_edges(G,pos,edgelist=light,width=4,edge_color='y')
+           
     labels = nx.get_edge_attributes(G,'weight')
     nx.draw_networkx_labels(G,pos,font_size=10,font_family='sans-serif')
     nx.draw_networkx_edge_labels(G,pos,edge_labels=labels)
@@ -43,7 +44,7 @@ def graph(glist):
 
 ### MST Function 
 
-def mst(vertex, edges):    
+def prims(vertex, edges):    
     connections = defaultdict(list)
     for vertex1,vertex2,w in edges: ### Building vertex connections with dict
         connections[vertex1].append((w, vertex1, vertex2))
@@ -62,6 +63,15 @@ def mst(vertex, edges):
                     heapq.heappush(remedges, i)
     return tree
 
+def kruskals(edges):
+    tree = []
+    for i in range(len(edges)):
+        if CycleDetect(edges[i][0],edges[i][1]) == False:          
+            tree.append(edges[i])
+    for key, value in vertexg.items():
+        if vertexg[key] != 'null':
+            vertexg[key] = 'null'
+    return tree
 
 ### Construct Edge List
     
@@ -85,23 +95,125 @@ for i in range(len(edges)):
     if edges[i][1] not in vertex:
         vertex.append(edges[i][1])
 
+### Cycle Detect Functions
+
+vertexg = defaultdict(list)
+g_index = 1
+g_names = []
+edges = sorted(edges, key=lambda item: int(item[2]))
+
+for i in range(len(vertex)):
+    vertexg[vertex[i]].append("null")
+    
+def SetBoth(vertex1, vertex2):
+    global g_index
+    g_name = 'group' + str(g_index)
+    vertexg[vertex1] = g_name
+    vertexg[vertex2] = g_name
+    g_index += 1
+    g_names.append(g_name)
+
+def SetAdd(vertex1, vertex2):
+    if 'null' in vertexg[vertex1]:
+        vertexg[vertex1] = vertexg[vertex2]
+    else:
+        vertexg[vertex2] = vertexg[vertex1]
+
+def SetMerge(vertex1, vertex2):
+    temp = vertexg[vertex1]
+    for key, value in vertexg.items():
+        if vertexg[key] == temp:
+            vertexg[key] = vertexg[vertex2]        
+
+def CycleDetect(vertex1, vertex2):
+    cycle = bool()
+    if 'null' in vertexg[vertex1] and 'null' in vertexg[vertex2]:
+        SetBoth(vertex1,vertex2)
+        cycle = False
+    elif 'null' in vertexg[vertex1] or 'null' in vertexg[vertex2]:
+        SetAdd(vertex1,vertex2)
+        cycle = False
+    elif vertexg[vertex1] in vertexg[vertex2]:
+        cycle = True
+    else:
+        SetMerge(vertex1,vertex2)
+        cycle = False
+    return cycle
+
 ### Calculate MST Value
 
-weight = 0
-for i in range(len(mst(vertex, edges))):
-    temp = mst(vertex, edges)[i][2]
-    weight += temp
+def weight (algorithm):
+    weight = 0
+    for i in range(len(algorithm)):
+        temp = algorithm[i][2]
+        weight += temp
+    return weight
 
-### Graph variables
+### Variables
 
 beforeMST = edges
-afterMST = mst(vertex, edges)
+primsMST = prims(vertex, edges)
+kruskalsMST = kruskals(edges)
 
-### Solution
+### MST Highlight
 
-print (" Initial vertecis are; \n", vertex, "\n Initial edges are; \n", 
-       beforeMST, " \n MST weight is", weight, "\n MST is; \n", afterMST, 
-       "\n Initial graph; \n")
-graph(beforeMST)
-print(" MST graph; \n")
-graph(afterMST)
+highlight = prims(vertex, edges)
+for i in range(len(highlight)):
+    highlight[i] = list(highlight[i])
+    del highlight[i][2]
+    highlight[i] = tuple(highlight[i])
+
+### Interface Function
+
+def interface():    
+    print("Please Select an Option \n \n",
+          "[1] Print Initial Graph \n",
+          "[2] Print Initial Weight \n",
+          "[3] Print Initial Edges \n",
+          "[4] Print Prim`s MST Graph \n",
+          "[5] Print Prim`s MST Weight \n",
+          "[6] Print Prim`s MST Edges \n",
+          "[7] Print Kruskal`s MST Graph \n",
+          "[8] Print Kruskal`s MST Weight \n",
+          "[9] Print Kruskal`s MST Edges \n",
+          "[H] Highlight MST on Initial Graph \n",
+          "[X] Exit interface \n")
+    UserInput = input("Option : ")
+    if UserInput == '1':
+        graph(beforeMST)
+        interface()
+    elif UserInput == '2':
+        print(weight(beforeMST))
+        interface()
+    elif UserInput == '3':
+        print(beforeMST)
+        interface()
+    elif UserInput == '4':
+        graph(primsMST)
+        interface()
+    elif UserInput == '5':
+        print(weight(primsMST))
+        interface()
+    elif UserInput == '6':
+        print(primsMST)
+        interface()
+    elif UserInput == '7':
+        graph(kruskalsMST)
+        interface()
+    elif UserInput == '8':
+        print(weight(kruskalsMST))
+        interface()
+    elif UserInput == '9':
+        print(kruskalsMST)
+        interface()
+    elif UserInput == 'H':
+        graph(beforeMST, highlight)
+        interface()        
+    elif UserInput == 'X':
+        print("Done !")
+    else:
+        print("Input cannot be understood !")
+        interface()
+
+
+interface()

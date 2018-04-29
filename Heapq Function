@@ -156,12 +156,22 @@ primsMST = prims(vertex, edges)
 kruskalsMST = kruskals(edges)
 
 ### MST Highlight
+def highlight(algorithm):
+    if algorithm == primsMST:        
+        highlight = prims(vertex, edges)
+    if algorithm == kruskalsMST:
+        highlight = kruskals(edges)
+    for i in range(len(highlight)):
+        highlight[i] = list(highlight[i])
+        del highlight[i][2]
+        highlight[i] = tuple(highlight[i])
+    return highlight
 
-highlight = prims(vertex, edges)
-for i in range(len(highlight)):
-    highlight[i] = list(highlight[i])
-    del highlight[i][2]
-    highlight[i] = tuple(highlight[i])
+def progress(algorithm):
+    temp = []
+    for i in range(len(highlight(algorithm))):
+        temp.append(highlight(algorithm)[i])
+        graph(beforeMST, temp)
 
 ### Interface Function
 
@@ -177,6 +187,8 @@ def interface():
           "[8] Print Kruskal`s MST Weight \n",
           "[9] Print Kruskal`s MST Edges \n",
           "[H] Highlight MST on Initial Graph \n",
+          "[P] Highlight MST Progress on Initial Graph for Prim`s \n",
+          "[K] Highlight MST Progress on Initial Graph for Kruskal`s \n",
           "[X] Exit interface \n")
     UserInput = input("Option : ")
     if UserInput == '1':
@@ -207,7 +219,13 @@ def interface():
         print(kruskalsMST)
         interface()
     elif UserInput == 'H':
-        graph(beforeMST, highlight)
+        graph(beforeMST, highlight(primsMST))
+        interface()        
+    elif UserInput == 'P':
+        progress(primsMST)
+        interface()        
+    elif UserInput == 'K':
+        progress(kruskalsMST)
         interface()        
     elif UserInput == 'X':
         print("Done !")

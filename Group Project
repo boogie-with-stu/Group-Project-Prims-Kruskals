@@ -34,15 +34,15 @@ def graph(glist, light=None):
     nx.draw_networkx_nodes(G,pos,node_color='r',node_size=200)
     nx.draw_networkx_edges(G,pos,edgelist=e,edge_color='b',width=2)
     if light != None: 
-        nx.draw_networkx_edges(G,pos,edgelist=light,width=4,edge_color='y')
-           
+        print("Edge Added is ", light[-1])
+        nx.draw_networkx_edges(G,pos,edgelist=light,width=4,edge_color='y')           
     labels = nx.get_edge_attributes(G,'weight')
     nx.draw_networkx_labels(G,pos,font_size=10,font_family='sans-serif')
     nx.draw_networkx_edge_labels(G,pos,font_size=7,edge_labels=labels)
     plt.axis('off')
     plt.show()  
 
-### MST Function 
+### MST Functions
 
 def prims(vertex, edges):    
     connections = defaultdict(list)
@@ -218,16 +218,16 @@ def interface():
     elif UserInput == '9':
         print(kruskalsMST)
         interface()
-    elif UserInput == 'H':
+    elif UserInput == 'H' or UserInput == 'h':
         graph(beforeMST, highlight(primsMST))
         interface()        
-    elif UserInput == 'P':
+    elif UserInput == 'P' or UserInput == 'p':
         progress(primsMST)
         interface()        
-    elif UserInput == 'K':
+    elif UserInput == 'K' or UserInput == 'k':
         progress(kruskalsMST)
         interface()        
-    elif UserInput == 'X':
+    elif UserInput == 'X' or UserInput == 'x':
         print("Done !")
     else:
         print("Input cannot be understood !")
